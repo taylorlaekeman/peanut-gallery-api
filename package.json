@@ -4,7 +4,11 @@
   "description": "Peanut Gallery API",
   "main": "index.js",
   "scripts": {
+    "check": "npm run format:check && npm run lint && npm run compile",
     "compile": "tsc",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint": "eslint src/**/*",
     "start": "npm run compile && node ./dist/index.js"
   },
   "repository": {
@@ -24,6 +28,15 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard-with-typescript": "^43.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "3.2.4",
     "typescript": "^5.3.3"
   }
 }
