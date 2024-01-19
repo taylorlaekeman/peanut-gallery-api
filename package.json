@@ -1,0 +1,29 @@
+{
+  "name": "peanut-gallery-api",
+  "version": "0.0.0",
+  "description": "Peanut Gallery API",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taylorlaekeman/peanut-gallery-api.git"
+  },
+  "author": "Taylor Laekeman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taylorlaekeman/peanut-gallery-api/issues"
+  },
+  "homepage": "https://github.com/taylorlaekeman/peanut-gallery-api#readme",
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "typescript": "^5.3.3"
+  }
+}
