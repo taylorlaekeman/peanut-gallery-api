@@ -10,7 +10,11 @@
     "format:check": "prettier . --check",
     "lint": "eslint src/**/*",
     "start": "npm run compile && node ./dist/index.js",
-    "test": "jest src"
+    "test": "npm run test:unit",
+    "test:integration": "jest --testPathPattern integration.test.ts",
+    "test:integration:watch": "npm run test:integration -- --watch",
+    "test:unit": "jest --testPathIgnorePatterns \"integration.test.ts|node_modules|dist\"",
+    "test:unit:watch": "npm run test:unit -- --watch"
   },
   "repository": {
     "type": "git",
