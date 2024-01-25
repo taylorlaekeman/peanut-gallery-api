@@ -11,6 +11,8 @@
     "lint": "eslint src/**/*",
     "start": "npm run compile && node ./dist/index.js",
     "test": "npm run test:unit",
+    "test:all": "jest",
+    "test:all:watch": "npm run test:all -- --watch",
     "test:integration": "jest --testPathPattern integration.test.ts",
     "test:integration:watch": "npm run test:integration -- --watch",
     "test:unit": "jest --testPathIgnorePatterns \"integration.test.ts|node_modules|dist\"",
@@ -29,7 +31,10 @@
   "type": "module",
   "dependencies": {
     "@apollo/server": "^4.10.0",
-    "graphql": "^16.8.1"
+    "@types/luxon": "^3.4.1",
+    "axios": "^1.6.5",
+    "graphql": "^16.8.1",
+    "luxon": "^3.4.4"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
