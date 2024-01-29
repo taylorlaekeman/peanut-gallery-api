@@ -102,13 +102,17 @@ function formatTMDBMovie(movie: TMDBMovie): Movie {
 export class TestMovieClient implements MovieClient {
   readonly movies: Movie[];
 
+  readonly pageSize: number = 20;
+
   constructor({ movies = [] }: { movies?: Movie[] } = {}) {
     this.movies = movies;
   }
 
-  async listMovies({ endDate, startDate }: ListMoviesInput = {}): Promise<
-    PaginatedResult<Movie>
-  > {
+  async listMovies({
+    endDate,
+    page = 1,
+    startDate,
+  }: ListMoviesInput = {}): Promise<PaginatedResult<Movie>> {
     const moviesAfterStartDate =
       startDate === undefined
         ? this.movies
@@ -117,10 +121,16 @@ export class TestMovieClient implements MovieClient {
       endDate === undefined
         ? moviesAfterStartDate
         : moviesAfterStartDate.filter((movie) => movie.releaseDate <= endDate);
+    const sortedMovies = moviesBeforeEndDate.sort((a, b) =>
+      a.score > b.score ? -1 : 1,
+    );
+    const pageStartIndex = (page - 1) * this.pageSize;
+    const pageEndIndex = pageStartIndex + this.pageSize;
+    const pagedMovies = sortedMovies.slice(pageStartIndex, pageEndIndex);
     return {
-      page: 1,
-      results: moviesBeforeEndDate.sort((a, b) => (a.score > b.score ? -1 : 1)),
-      totalPages: 1,
+      page,
+      results: pagedMovies,
+      totalPages: Math.ceil(sortedMovies.length / this.pageSize),
     };
   }
 }

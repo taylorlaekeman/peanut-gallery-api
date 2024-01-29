@@ -152,7 +152,7 @@ function getMovie({
   reviewCount?: number;
   score?: number;
   title?: string;
-}): Movie {
+} = {}): Movie {
   return {
     id,
     releaseDate: DateTime.fromISO(releaseDate),
@@ -278,5 +278,69 @@ describe('test movie client', () => {
         }),
       ],
     });
+  });
+
+  test('limits movies to one page', async () => {
+    const client = new TestMovieClient({
+      movies: [
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+      ],
+    });
+    const result = await client.listMovies();
+    expect(result.page).toBe(1);
+    expect(result.results).toHaveLength(20);
+    expect(result.totalPages).toBe(2);
+  });
+
+  test('selects movies based on page', async () => {
+    const client = new TestMovieClient({
+      movies: [
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+        getMovie(),
+      ],
+    });
+    const result = await client.listMovies({ page: 2 });
+    expect(result.page).toBe(2);
+    expect(result.results).toHaveLength(1);
+    expect(result.totalPages).toBe(2);
   });
 });

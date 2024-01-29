@@ -12,11 +12,11 @@
     "start": "npm run compile && node ./dist/index.js",
     "test": "npm run test:unit",
     "test:all": "jest",
-    "test:all:watch": "npm run test:all -- --watch",
+    "test:all:watch": "npm run test:all -- --watchAll",
     "test:integration": "jest --testPathPattern integration.test.ts",
-    "test:integration:watch": "npm run test:integration -- --watch",
+    "test:integration:watch": "npm run test:integration -- --watchAll",
     "test:unit": "jest --testPathIgnorePatterns \"integration.test.ts|node_modules|dist\"",
-    "test:unit:watch": "npm run test:unit -- --watch"
+    "test:unit:watch": "npm run test:unit -- --watchAll"
   },
   "repository": {
     "type": "git",
