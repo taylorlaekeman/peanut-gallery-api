@@ -3,8 +3,7 @@ import axios from 'axios';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
-import type { Movie } from './movieClient';
-import { TestMovieClient, TMDBMovieClient } from './movieClient';
+import { buildMovie, TestMovieClient, TMDBMovieClient } from './movieClient';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -140,41 +139,19 @@ describe('tmdb movie client', () => {
   });
 });
 
-function getMovie({
-  id = 'test-id',
-  releaseDate = '2020-01-01',
-  reviewCount = 300,
-  score = 6.0,
-  title = 'Test Title',
-}: {
-  id?: string;
-  releaseDate?: string;
-  reviewCount?: number;
-  score?: number;
-  title?: string;
-} = {}): Movie {
-  return {
-    id,
-    releaseDate: DateTime.fromISO(releaseDate),
-    reviewCount,
-    score,
-    title,
-  };
-}
-
 describe('test movie client', () => {
   test('returns movies ordered by score descending', async () => {
     const client = new TestMovieClient({
       movies: [
-        getMovie({
+        buildMovie({
           score: 7.0,
           title: 'Batman Begins',
         }),
-        getMovie({
+        buildMovie({
           score: 9.0,
           title: 'The Dark Knight',
         }),
-        getMovie({
+        buildMovie({
           score: 8.0,
           title: 'The Dark Knight Rises',
         }),
@@ -184,15 +161,15 @@ describe('test movie client', () => {
     expect(movies).toMatchObject({
       page: 1,
       results: [
-        getMovie({
+        buildMovie({
           score: 9.0,
           title: 'The Dark Knight',
         }),
-        getMovie({
+        buildMovie({
           score: 8.0,
           title: 'The Dark Knight Rises',
         }),
-        getMovie({
+        buildMovie({
           score: 7.0,
           title: 'Batman Begins',
         }),
@@ -203,17 +180,17 @@ describe('test movie client', () => {
   test('excludes movies released before start date', async () => {
     const client = new TestMovieClient({
       movies: [
-        getMovie({
+        buildMovie({
           releaseDate: '2010-01-01',
           score: 7.0,
           title: 'Batman Begins',
         }),
-        getMovie({
+        buildMovie({
           releaseDate: '2020-01-01',
           score: 9.0,
           title: 'The Dark Knight',
         }),
-        getMovie({
+        buildMovie({
           releaseDate: '2020-01-01',
           score: 8.0,
           title: 'The Dark Knight Rises',
@@ -226,12 +203,12 @@ describe('test movie client', () => {
     expect(movies).toMatchObject({
       page: 1,
       results: [
-        getMovie({
+        buildMovie({
           releaseDate: '2020-01-01',
           score: 9.0,
           title: 'The Dark Knight',
         }),
-        getMovie({
+        buildMovie({
           releaseDate: '2020-01-01',
           score: 8.0,
           title: 'The Dark Knight Rises',
@@ -243,17 +220,17 @@ describe('test movie client', () => {
   test('excludes movies released after end date', async () => {
     const client = new TestMovieClient({
       movies: [
-        getMovie({
+        buildMovie({
           releaseDate: '2010-01-01',
           score: 7.0,
           title: 'Batman Begins',
         }),
-        getMovie({
+        buildMovie({
           releaseDate: '2010-01-01',
           score: 9.0,
           title: 'The Dark Knight',
         }),
-        getMovie({
+        buildMovie({
           releaseDate: '2020-01-01',
           score: 8.0,
           title: 'The Dark Knight Rises',
@@ -266,12 +243,12 @@ describe('test movie client', () => {
     expect(movies).toMatchObject({
       page: 1,
       results: [
-        getMovie({
+        buildMovie({
           releaseDate: '2010-01-01',
           score: 9.0,
           title: 'The Dark Knight',
         }),
-        getMovie({
+        buildMovie({
           releaseDate: '2010-01-01',
           score: 7.0,
           title: 'Batman Begins',
@@ -283,27 +260,27 @@ describe('test movie client', () => {
   test('limits movies to one page', async () => {
     const client = new TestMovieClient({
       movies: [
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
       ],
     });
     const result = await client.listMovies();
@@ -315,27 +292,27 @@ describe('test movie client', () => {
   test('selects movies based on page', async () => {
     const client = new TestMovieClient({
       movies: [
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
-        getMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
+        buildMovie(),
       ],
     });
     const result = await client.listMovies({ page: 2 });

@@ -11,7 +11,7 @@ interface ListMoviesInput {
   startDate?: DateTime;
 }
 
-interface PaginatedResult<Type> {
+export interface PaginatedResult<Type> {
   page: number;
   results: Type[];
   totalPages: number;
@@ -133,4 +133,26 @@ export class TestMovieClient implements MovieClient {
       totalPages: Math.ceil(sortedMovies.length / this.pageSize),
     };
   }
+}
+
+export function buildMovie({
+  id = 'test-id',
+  releaseDate = '2020-01-01',
+  reviewCount = 300,
+  score = 6.0,
+  title = 'Test Title',
+}: {
+  id?: string;
+  releaseDate?: string;
+  reviewCount?: number;
+  score?: number;
+  title?: string;
+} = {}): Movie {
+  return {
+    id,
+    releaseDate: DateTime.fromISO(releaseDate),
+    reviewCount,
+    score,
+    title,
+  };
 }
