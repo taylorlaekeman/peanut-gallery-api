@@ -1,7 +1,24 @@
 import { ApolloServer } from '@apollo/server';
+/* eslint-disable-next-line import/extensions */
+import { startStandaloneServer } from '@apollo/server/standalone';
 import { DateTime } from 'luxon';
 
 import type { MovieClient } from './movieClient';
+import { TMDBMovieClient } from './movieClient.js';
+
+process.env.API_KEY = 'a2a71e4b2f8a2f01d898d8ba5241fc75';
+
+export async function startServer(): Promise<string> {
+  const server = getServer();
+  const { url } = await startStandaloneServer<Context>(server, {
+    context: async () => ({
+      movieClient: new TMDBMovieClient({ apiKey: process.env.API_KEY ?? '' }),
+      now: DateTime.now(),
+    }),
+    listen: { port: 4000 },
+  });
+  return url;
+}
 
 export function getServer(): ApolloServer<Context> {
   return new ApolloServer<Context>({

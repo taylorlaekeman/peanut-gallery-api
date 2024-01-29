@@ -2,9 +2,9 @@
 import { expect, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
-import getServer from './api';
+import getServer from './api.js';
 import type { Movie, PaginatedResult } from './movieClient';
-import { buildMovie, TestMovieClient } from './movieClient';
+import { buildMovie, TestMovieClient } from './movieClient.js';
 
 const moviesQuery = `#graphql
   query GetMovies($endDate: String, $page: Int, $startDate: String) {

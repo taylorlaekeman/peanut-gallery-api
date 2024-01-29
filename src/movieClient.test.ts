@@ -3,7 +3,7 @@ import axios from 'axios';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
-import { buildMovie, TestMovieClient, TMDBMovieClient } from './movieClient';
+import { buildMovie, TestMovieClient, TMDBMovieClient } from './movieClient.js';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;

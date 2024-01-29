@@ -1,7 +1,7 @@
 import { beforeAll, expect, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
-import { TMDBMovieClient } from './movieClient';
+import { TMDBMovieClient } from './movieClient.js';
 
 process.env.API_KEY = 'a2a71e4b2f8a2f01d898d8ba5241fc75';
 let apiKey = 'api key';
