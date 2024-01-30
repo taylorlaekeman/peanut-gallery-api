@@ -6,8 +6,6 @@ import { DateTime } from 'luxon';
 import type { MovieClient } from './movieClient';
 import { TMDBMovieClient } from './movieClient.js';
 
-process.env.API_KEY = 'a2a71e4b2f8a2f01d898d8ba5241fc75';
-
 export async function startServer(): Promise<string> {
   const server = getServer();
   const { url } = await startStandaloneServer<Context>(server, {
