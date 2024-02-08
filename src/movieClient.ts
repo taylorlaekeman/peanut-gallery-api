@@ -2,13 +2,13 @@ import axios from 'axios';
 import { DateTime } from 'luxon';
 
 export interface MovieClient {
-  listMovies: (input?: ListMoviesInput) => Promise<PaginatedResult<Movie>>;
+  listMovies: (input: ListMoviesInput) => Promise<PaginatedResult<Movie>>;
 }
 
 interface ListMoviesInput {
-  endDate?: DateTime;
+  endDate: DateTime;
   page?: number;
-  startDate?: DateTime;
+  startDate: DateTime;
 }
 
 export interface PaginatedResult<Type> {
@@ -34,21 +34,19 @@ export class TMDBMovieClient implements MovieClient {
 
   async listMovies({
     endDate,
-    page,
+    page = 1,
     startDate,
-  }: ListMoviesInput | undefined = {}): Promise<PaginatedResult<Movie>> {
+  }: ListMoviesInput): Promise<PaginatedResult<Movie>> {
     const params: TMDBParams = {
       api_key: this.apiKey,
-      include_adult: true,
       language: 'en-US',
-      sort_by: 'vote_average.desc',
-      'vote_count.gte': 300,
+      page,
+      'primary_release_date.gte': startDate.toISODate() ?? undefined,
+      'primary_release_date.lte': endDate.toISODate() ?? undefined,
+      sort_by: 'popularity.desc',
+      'vote_count.gte': 10,
+      'with_runtime.gte': 60,
     };
-    if (startDate !== undefined)
-      params['release_date.gte'] = startDate.toISODate() ?? undefined;
-    if (endDate !== undefined)
-      params['release_date.lte'] = endDate.toISODate() ?? undefined;
-    if (page !== undefined) params.page = page;
     const response = await axios.get<TMDBResponse>(
       'https://api.themoviedb.org/3/discover/movie',
       {
@@ -57,7 +55,9 @@ export class TMDBMovieClient implements MovieClient {
     );
     return {
       page: response.data.page,
-      results: response.data.results.map(formatTMDBMovie),
+      results: response.data.results
+        .map(formatTMDBMovie)
+        .sort((a, b) => (a.score > b.score ? -1 : 1)),
       totalPages: response.data.total_pages,
     };
   }
@@ -65,13 +65,14 @@ export class TMDBMovieClient implements MovieClient {
 
 interface TMDBParams {
   api_key: string;
-  include_adult: boolean;
+  include_adult?: boolean;
   language: string;
   page?: number;
-  'release_date.gte'?: string;
-  'release_date.lte'?: string;
+  'primary_release_date.gte'?: string;
+  'primary_release_date.lte'?: string;
   sort_by: string;
   'vote_count.gte': number;
+  'with_runtime.gte'?: number;
 }
 
 interface TMDBResponse {
@@ -112,7 +113,7 @@ export class TestMovieClient implements MovieClient {
     endDate,
     page = 1,
     startDate,
-  }: ListMoviesInput = {}): Promise<PaginatedResult<Movie>> {
+  }: ListMoviesInput): Promise<PaginatedResult<Movie>> {
     const moviesAfterStartDate =
       startDate === undefined
         ? this.movies

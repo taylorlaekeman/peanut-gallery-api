@@ -112,11 +112,11 @@ test('uses start date one month ago when none is provided', async () => {
   expect(paginatedMovies.results[0].id).toBe('2');
 });
 
-test('uses end date today when none is provided', async () => {
+test('uses end date one month in the future when none is provided', async () => {
   const client = new TestMovieClient({
     movies: [
       buildMovie({ id: '1', releaseDate: '2020-01-01' }),
-      buildMovie({ id: '2', releaseDate: '2020-02-01' }),
+      buildMovie({ id: '2', releaseDate: '2020-03-01' }),
     ],
   });
   const api = getServer();

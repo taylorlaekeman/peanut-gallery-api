@@ -12,40 +12,43 @@ beforeAll(() => {
 
 test('calls api correctly', async () => {
   const client = new TMDBMovieClient({ apiKey });
-  const result = await client.listMovies();
+  const result = await client.listMovies({
+    endDate: DateTime.fromISO('2020-01-31'),
+    startDate: DateTime.fromISO('2020-01-01'),
+  });
   expect(result.results[0]).toMatchObject({
-    id: '278',
-    releaseDate: DateTime.fromISO('1994-09-23'),
-    score: 8.7,
-    title: 'The Shawshank Redemption',
+    id: '653567',
+    releaseDate: DateTime.fromISO('2020-01-31'),
+    title: 'Miss Americana',
   });
   expect(result.results[1]).toMatchObject({
-    id: '238',
-    releaseDate: DateTime.fromISO('1972-03-14'),
-    score: 8.7,
-    title: 'The Godfather',
+    id: '573730',
+    releaseDate: DateTime.fromISO('2020-01-17'),
+    title: 'Made in Abyss: Dawn of the Deep Soul',
   });
   expect(result.results[2]).toMatchObject({
-    id: '240',
-    releaseDate: DateTime.fromISO('1974-12-20'),
-    score: 8.6,
-    title: 'The Godfather Part II',
+    id: '609242',
+    releaseDate: DateTime.fromISO('2020-01-16'),
+    title: 'The Heist of the Century',
   });
   expect(result.results[3]).toMatchObject({
-    id: '424',
-    releaseDate: DateTime.fromISO('1993-12-15'),
-    score: 8.6,
-    title: "Schindler's List",
+    id: '522627',
+    releaseDate: DateTime.fromISO('2020-01-01'),
+    title: 'The Gentlemen',
   });
   expect(result.results[4]).toMatchObject({
-    id: '389',
-    releaseDate: DateTime.fromISO('1957-04-10'),
-    score: 8.5,
-    title: '12 Angry Men',
+    id: '656690',
+    releaseDate: DateTime.fromISO('2020-01-26'),
+    title: 'The Social Dilemma',
   });
 });
 
 test('handles error', async () => {
   const client = new TMDBMovieClient({ apiKey: 'bad' });
-  await expect(client.listMovies()).rejects.toThrow();
+  await expect(
+    client.listMovies({
+      endDate: DateTime.fromISO('2020-01-01'),
+      startDate: DateTime.fromISO('2020-01-01'),
+    }),
+  ).rejects.toThrow();
 });

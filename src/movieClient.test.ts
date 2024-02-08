@@ -30,16 +30,22 @@ describe('tmdb movie client', () => {
       },
     });
     const client = new TMDBMovieClient({ apiKey: 'test-api-key' });
-    const movies = await client.listMovies();
+    const movies = await client.listMovies({
+      endDate: DateTime.fromISO('2020-01-31'),
+      startDate: DateTime.fromISO('2020-01-01'),
+    });
     expect(mockedAxios.get).toHaveBeenCalledWith(
       'https://api.themoviedb.org/3/discover/movie',
       {
         params: {
           api_key: 'test-api-key',
-          include_adult: true,
           language: 'en-US',
-          sort_by: 'vote_average.desc',
-          'vote_count.gte': 300,
+          page: 1,
+          'primary_release_date.gte': '2020-01-01',
+          'primary_release_date.lte': '2020-01-31',
+          sort_by: 'popularity.desc',
+          'vote_count.gte': 10,
+          'with_runtime.gte': 60,
         },
       },
     );
@@ -60,57 +66,12 @@ describe('tmdb movie client', () => {
   test('handles api error', async () => {
     mockedAxios.get.mockRejectedValueOnce(new Error('test'));
     const client = new TMDBMovieClient({ apiKey: 'test-api-key' });
-    await expect(client.listMovies()).rejects.toThrow();
-  });
-
-  test('passes start date to api', async () => {
-    mockedAxios.get.mockResolvedValueOnce({
-      data: {
-        page: 1,
-        results: [],
-        total_pages: 1,
-      },
-    });
-    const client = new TMDBMovieClient({ apiKey: 'test-api-key' });
-    await client.listMovies({ startDate: DateTime.fromISO('2020-01-01') });
-    expect(mockedAxios.get).toHaveBeenCalledWith(
-      'https://api.themoviedb.org/3/discover/movie',
-      {
-        params: {
-          api_key: 'test-api-key',
-          include_adult: true,
-          language: 'en-US',
-          'release_date.gte': '2020-01-01',
-          sort_by: 'vote_average.desc',
-          'vote_count.gte': 300,
-        },
-      },
-    );
-  });
-
-  test('passes end date to api', async () => {
-    mockedAxios.get.mockResolvedValueOnce({
-      data: {
-        page: 1,
-        results: [],
-        total_pages: 1,
-      },
-    });
-    const client = new TMDBMovieClient({ apiKey: 'test-api-key' });
-    await client.listMovies({ endDate: DateTime.fromISO('2020-01-01') });
-    expect(mockedAxios.get).toHaveBeenCalledWith(
-      'https://api.themoviedb.org/3/discover/movie',
-      {
-        params: {
-          api_key: 'test-api-key',
-          include_adult: true,
-          language: 'en-US',
-          'release_date.lte': '2020-01-01',
-          sort_by: 'vote_average.desc',
-          'vote_count.gte': 300,
-        },
-      },
-    );
+    await expect(
+      client.listMovies({
+        endDate: DateTime.fromISO('2020-01-31'),
+        startDate: DateTime.fromISO('2020-01-01'),
+      }),
+    ).rejects.toThrow();
   });
 
   test('passes page to api', async () => {
@@ -122,17 +83,23 @@ describe('tmdb movie client', () => {
       },
     });
     const client = new TMDBMovieClient({ apiKey: 'test-api-key' });
-    await client.listMovies({ page: 10 });
+    await client.listMovies({
+      endDate: DateTime.fromISO('2020-01-31'),
+      page: 10,
+      startDate: DateTime.fromISO('2020-01-01'),
+    });
     expect(mockedAxios.get).toHaveBeenCalledWith(
       'https://api.themoviedb.org/3/discover/movie',
       {
         params: {
           api_key: 'test-api-key',
-          include_adult: true,
           language: 'en-US',
           page: 10,
-          sort_by: 'vote_average.desc',
-          'vote_count.gte': 300,
+          'primary_release_date.gte': '2020-01-01',
+          'primary_release_date.lte': '2020-01-31',
+          sort_by: 'popularity.desc',
+          'vote_count.gte': 10,
+          'with_runtime.gte': 60,
         },
       },
     );
@@ -157,7 +124,10 @@ describe('test movie client', () => {
         }),
       ],
     });
-    const movies = await client.listMovies();
+    const movies = await client.listMovies({
+      endDate: DateTime.fromISO('2020-01-31'),
+      startDate: DateTime.fromISO('2020-01-01'),
+    });
     expect(movies).toMatchObject({
       page: 1,
       results: [
@@ -199,6 +169,7 @@ describe('test movie client', () => {
     });
     const movies = await client.listMovies({
       startDate: DateTime.fromISO('2015-01-01'),
+      endDate: DateTime.fromISO('2030-01-01'),
     });
     expect(movies).toMatchObject({
       page: 1,
@@ -239,6 +210,7 @@ describe('test movie client', () => {
     });
     const movies = await client.listMovies({
       endDate: DateTime.fromISO('2015-01-01'),
+      startDate: DateTime.fromISO('2000-01-01'),
     });
     expect(movies).toMatchObject({
       page: 1,
@@ -283,7 +255,10 @@ describe('test movie client', () => {
         buildMovie(),
       ],
     });
-    const result = await client.listMovies();
+    const result = await client.listMovies({
+      endDate: DateTime.fromISO('2020-01-31'),
+      startDate: DateTime.fromISO('2020-01-01'),
+    });
     expect(result.page).toBe(1);
     expect(result.results).toHaveLength(20);
     expect(result.totalPages).toBe(2);
@@ -315,7 +290,11 @@ describe('test movie client', () => {
         buildMovie(),
       ],
     });
-    const result = await client.listMovies({ page: 2 });
+    const result = await client.listMovies({
+      endDate: DateTime.fromISO('2020-01-31'),
+      page: 2,
+      startDate: DateTime.fromISO('2020-01-01'),
+    });
     expect(result.page).toBe(2);
     expect(result.results).toHaveLength(1);
     expect(result.totalPages).toBe(2);

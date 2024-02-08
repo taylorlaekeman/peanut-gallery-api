@@ -67,11 +67,19 @@ const RESOLVERS = {
           : DateTime.fromISO(startDate);
       const endDateOrDefault =
         endDate === undefined ? now : DateTime.fromISO(endDate);
-      return await movieClient.listMovies({
+      const results = await movieClient.listMovies({
         endDate: endDateOrDefault,
         page,
         startDate: startDateOrDefault,
       });
+      const formattedResults = {
+        ...results,
+        results: results.results.map((movie) => ({
+          ...movie,
+          releaseDate: movie.releaseDate.toISODate(),
+        })),
+      };
+      return formattedResults;
     },
   },
 };
