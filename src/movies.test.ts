@@ -65,7 +65,7 @@ test('resolver passes arguments to movie client', async () => {
         movieClient: client,
         now: DateTime.fromISO('2020-01-01'),
       },
-    },
+    }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');
   const responseData = response.body.singleResult.data;
@@ -99,7 +99,7 @@ test('uses start date one month ago when none is provided', async () => {
         movieClient: client,
         now: DateTime.fromISO('2020-02-01'),
       },
-    },
+    }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');
   const responseData = response.body.singleResult.data;
@@ -133,7 +133,7 @@ test('uses end date one month in the future when none is provided', async () => 
         movieClient: client,
         now: DateTime.fromISO('2020-01-01'),
       },
-    },
+    }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');
   const responseData = response.body.singleResult.data;
@@ -186,7 +186,7 @@ test('uses page 1 when none is provided', async () => {
         movieClient: client,
         now: DateTime.fromISO('2020-01-01'),
       },
-    },
+    }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');
   const responseData = response.body.singleResult.data;
@@ -198,6 +198,6 @@ test('uses page 1 when none is provided', async () => {
   expect(paginatedMovies.results).toHaveLength(20);
   expect(paginatedMovies.results[0].id).toBe('1');
   expect(paginatedMovies.results[paginatedMovies.results.length - 1].id).toBe(
-    '20',
+    '20'
   );
 });

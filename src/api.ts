@@ -59,7 +59,7 @@ const RESOLVERS = {
         page = 1,
         startDate,
       }: { endDate?: string; page?: number; startDate?: string },
-      { movieClient, now }: Context,
+      { movieClient, now }: Context
     ) => {
       const startDateOrDefault =
         startDate === undefined

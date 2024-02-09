@@ -30,7 +30,7 @@ describe('HttpMetascoreClient', () => {
     mockedAxios.get.mockRejectedValueOnce({ response: { status: 404 } });
     const client = new MetascoreClient();
     await expect(client.getMetascore('asdf123')).rejects.toThrow(
-      MovieNotFoundError,
+      MovieNotFoundError
     );
   });
 
@@ -40,7 +40,7 @@ describe('HttpMetascoreClient', () => {
     });
     const client = new MetascoreClient();
     await expect(client.getMetascore('Badland Hunters')).rejects.toThrow(
-      InsufficientReviewsError,
+      InsufficientReviewsError
     );
   });
 });
@@ -57,7 +57,7 @@ describe('TestMetascoreClient', () => {
   test('throws movie not found', async () => {
     const client = new TestMetascoreClient();
     await expect(client.getMetascore('asdf123')).rejects.toThrow(
-      MovieNotFoundError,
+      MovieNotFoundError
     );
   });
 
@@ -68,7 +68,7 @@ describe('TestMetascoreClient', () => {
       },
     });
     await expect(client.getMetascore('Badland Hunters')).rejects.toThrow(
-      InsufficientReviewsError,
+      InsufficientReviewsError
     );
   });
 });

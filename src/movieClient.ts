@@ -19,9 +19,9 @@ export interface PaginatedResult<Type> {
 
 export interface Movie {
   id: string;
+  popularity: number;
   releaseDate: DateTime;
-  reviewCount: number;
-  score: number;
+  score?: number;
   title: string;
 }
 
@@ -51,13 +51,11 @@ export class TMDBMovieClient implements MovieClient {
       'https://api.themoviedb.org/3/discover/movie',
       {
         params,
-      },
+      }
     );
     return {
       page: response.data.page,
-      results: response.data.results
-        .map(formatTMDBMovie)
-        .sort((a, b) => (a.score > b.score ? -1 : 1)),
+      results: response.data.results.map(formatTMDBMovie),
       totalPages: response.data.total_pages,
     };
   }
@@ -84,6 +82,7 @@ interface TMDBResponse {
 
 interface TMDBMovie {
   id: number;
+  popularity: number;
   release_date: string;
   title: string;
   vote_average: number;
@@ -93,8 +92,8 @@ interface TMDBMovie {
 function formatTMDBMovie(movie: TMDBMovie): Movie {
   return {
     id: movie.id.toString(),
+    popularity: movie.popularity,
     releaseDate: DateTime.fromISO(movie.release_date),
-    reviewCount: movie.vote_count,
     score: movie.vote_average,
     title: movie.title,
   };
@@ -123,7 +122,7 @@ export class TestMovieClient implements MovieClient {
         ? moviesAfterStartDate
         : moviesAfterStartDate.filter((movie) => movie.releaseDate <= endDate);
     const sortedMovies = moviesBeforeEndDate.sort((a, b) =>
-      a.score > b.score ? -1 : 1,
+      a.popularity > b.popularity ? -1 : 1
     );
     const pageStartIndex = (page - 1) * this.pageSize;
     const pageEndIndex = pageStartIndex + this.pageSize;
@@ -138,12 +137,13 @@ export class TestMovieClient implements MovieClient {
 
 export function buildMovie({
   id = 'test-id',
+  popularity = 50,
   releaseDate = '2020-01-01',
-  reviewCount = 300,
   score = 6.0,
   title = 'Test Title',
 }: {
   id?: string;
+  popularity?: number;
   releaseDate?: string;
   reviewCount?: number;
   score?: number;
@@ -151,8 +151,8 @@ export function buildMovie({
 } = {}): Movie {
   return {
     id,
+    popularity,
     releaseDate: DateTime.fromISO(releaseDate),
-    reviewCount,
     score,
     title,
   };

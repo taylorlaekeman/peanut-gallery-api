@@ -24,7 +24,7 @@ export class HttpMetascoreClient implements MetascoreClient {
   private async loadWebpageHtml(title: string): Promise<string> {
     try {
       const response = await axios.get<string>(
-        `https://www.metacritic.com/movie/${title}`,
+        `https://www.metacritic.com/movie/${title}`
       );
       return response.data;
     } catch (error) {

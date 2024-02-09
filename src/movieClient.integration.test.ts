@@ -17,29 +17,29 @@ test('calls api correctly', async () => {
     startDate: DateTime.fromISO('2020-01-01'),
   });
   expect(result.results[0]).toMatchObject({
-    id: '653567',
-    releaseDate: DateTime.fromISO('2020-01-31'),
-    title: 'Miss Americana',
+    id: '660521',
+    releaseDate: DateTime.fromISO('2020-01-07'),
+    title: 'The Mercenary',
   });
   expect(result.results[1]).toMatchObject({
-    id: '573730',
-    releaseDate: DateTime.fromISO('2020-01-17'),
-    title: 'Made in Abyss: Dawn of the Deep Soul',
-  });
-  expect(result.results[2]).toMatchObject({
-    id: '609242',
-    releaseDate: DateTime.fromISO('2020-01-16'),
-    title: 'The Heist of the Century',
-  });
-  expect(result.results[3]).toMatchObject({
     id: '522627',
     releaseDate: DateTime.fromISO('2020-01-01'),
     title: 'The Gentlemen',
   });
+  expect(result.results[2]).toMatchObject({
+    id: '38700',
+    releaseDate: DateTime.fromISO('2020-01-15'),
+    title: 'Bad Boys for Life',
+  });
+  expect(result.results[3]).toMatchObject({
+    id: '659676',
+    releaseDate: DateTime.fromISO('2020-01-09'),
+    title: 'Masameer: The Movie',
+  });
   expect(result.results[4]).toMatchObject({
-    id: '656690',
-    releaseDate: DateTime.fromISO('2020-01-26'),
-    title: 'The Social Dilemma',
+    id: '573730',
+    releaseDate: DateTime.fromISO('2020-01-17'),
+    title: 'Made in Abyss: Dawn of the Deep Soul',
   });
 });
 
@@ -49,6 +49,6 @@ test('handles error', async () => {
     client.listMovies({
       endDate: DateTime.fromISO('2020-01-01'),
       startDate: DateTime.fromISO('2020-01-01'),
-    }),
+    })
   ).rejects.toThrow();
 });

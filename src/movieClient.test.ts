@@ -20,10 +20,10 @@ describe('tmdb movie client', () => {
         results: [
           {
             id: 1,
+            popularity: 50,
             release_date: '2020-01-01',
             title: 'Test Title',
             vote_average: 8.0,
-            vote_count: 500,
           },
         ],
         total_pages: 1,
@@ -47,15 +47,15 @@ describe('tmdb movie client', () => {
           'vote_count.gte': 10,
           'with_runtime.gte': 60,
         },
-      },
+      }
     );
     expect(movies).toMatchObject({
       page: 1,
       results: [
         {
           id: '1',
+          popularity: 50,
           releaseDate: DateTime.fromISO('2020-01-01'),
-          reviewCount: 500,
           score: 8.0,
           title: 'Test Title',
         },
@@ -70,7 +70,7 @@ describe('tmdb movie client', () => {
       client.listMovies({
         endDate: DateTime.fromISO('2020-01-31'),
         startDate: DateTime.fromISO('2020-01-01'),
-      }),
+      })
     ).rejects.toThrow();
   });
 
@@ -101,7 +101,7 @@ describe('tmdb movie client', () => {
           'vote_count.gte': 10,
           'with_runtime.gte': 60,
         },
-      },
+      }
     );
   });
 });
@@ -132,16 +132,16 @@ describe('test movie client', () => {
       page: 1,
       results: [
         buildMovie({
+          score: 7.0,
+          title: 'Batman Begins',
+        }),
+        buildMovie({
           score: 9.0,
           title: 'The Dark Knight',
         }),
         buildMovie({
           score: 8.0,
           title: 'The Dark Knight Rises',
-        }),
-        buildMovie({
-          score: 7.0,
-          title: 'Batman Begins',
         }),
       ],
     });
@@ -217,13 +217,13 @@ describe('test movie client', () => {
       results: [
         buildMovie({
           releaseDate: '2010-01-01',
-          score: 9.0,
-          title: 'The Dark Knight',
+          score: 7.0,
+          title: 'Batman Begins',
         }),
         buildMovie({
           releaseDate: '2010-01-01',
-          score: 7.0,
-          title: 'Batman Begins',
+          score: 9.0,
+          title: 'The Dark Knight',
         }),
       ],
     });
