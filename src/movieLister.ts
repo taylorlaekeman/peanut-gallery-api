@@ -72,7 +72,7 @@ export class MovieLister {
     for (const movie of movies) {
       try {
         const score = await this.metascoreClient.getMetascore(movie.title);
-        scoredMovies.push({ ...movie, score });
+        scoredMovies.push({ ...movie, score: score / 10 });
       } catch (error) {
         if (error instanceof MovieNotFoundError) continue;
         if (error instanceof InsufficientReviewsError) continue;

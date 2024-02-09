@@ -44,14 +44,14 @@ test('sorts results by metascore', async () => {
       id: '2',
       popularity: 100,
       releaseDate: DateTime.fromISO('2015-06-19'),
-      score: 94,
+      score: 9.4,
       title: 'Inside Out',
     },
     {
       id: '1',
       popularity: 50,
       releaseDate: DateTime.fromISO('2020-08-11'),
-      score: 83,
+      score: 8.3,
       title: 'Soul',
     },
   ]);
@@ -94,7 +94,7 @@ test('excludes movies below popularity threshold', async () => {
       id: '2',
       popularity: 100,
       releaseDate: DateTime.fromISO('2015-06-19'),
-      score: 94,
+      score: 9.4,
       title: 'Inside Out',
     },
   ]);
@@ -175,7 +175,7 @@ test('handles movie not found error', async () => {
       id: '1',
       popularity: 50,
       releaseDate: DateTime.fromISO('2020-08-11'),
-      score: 83,
+      score: 8.3,
       title: 'Soul',
     },
   ]);
@@ -217,7 +217,7 @@ test('handles insufficient reviews', async () => {
       id: '1',
       popularity: 50,
       releaseDate: DateTime.fromISO('2020-08-11'),
-      score: 83,
+      score: 8.3,
       title: 'Soul',
     },
   ]);

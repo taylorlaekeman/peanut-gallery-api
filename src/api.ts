@@ -3,13 +3,17 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { DateTime } from 'luxon';
 
+import type { MetascoreClient } from './metascoreClient';
+import { HttpMetascoreClient } from './metascoreClient.js';
 import type { MovieClient } from './movieClient';
 import { TMDBMovieClient } from './movieClient.js';
+import { MovieLister } from './movieLister.js';
 
 export async function startServer(): Promise<string> {
   const server = getServer();
   const { url } = await startStandaloneServer<Context>(server, {
     context: async () => ({
+      metascoreClient: new HttpMetascoreClient(),
       movieClient: new TMDBMovieClient({ apiKey: process.env.API_KEY ?? '' }),
       now: DateTime.now(),
     }),
@@ -26,6 +30,7 @@ export function getServer(): ApolloServer<Context> {
 }
 
 interface Context {
+  metascoreClient: MetascoreClient;
   movieClient: MovieClient;
   now: DateTime;
 }
@@ -59,27 +64,30 @@ const RESOLVERS = {
         page = 1,
         startDate,
       }: { endDate?: string; page?: number; startDate?: string },
-      { movieClient, now }: Context
+      { metascoreClient, movieClient, now }: Context
     ) => {
       const startDateOrDefault =
         startDate === undefined
           ? now.minus({ month: 1 })
           : DateTime.fromISO(startDate);
       const endDateOrDefault =
-        endDate === undefined ? now : DateTime.fromISO(endDate);
-      const results = await movieClient.listMovies({
+        endDate === undefined
+          ? now.plus({ month: 1 })
+          : DateTime.fromISO(endDate);
+      const lister = new MovieLister({ metascoreClient, movieClient });
+      const movies = await lister.list({
         endDate: endDateOrDefault,
-        page,
         startDate: startDateOrDefault,
       });
-      const formattedResults = {
-        ...results,
-        results: results.results.map((movie) => ({
-          ...movie,
-          releaseDate: movie.releaseDate.toISODate(),
-        })),
+      const formattedMovies = movies.map((movie) => ({
+        ...movie,
+        releaseDate: movie.releaseDate.toISODate(),
+      }));
+      return {
+        page: 1,
+        results: formattedMovies,
+        totalPages: 1,
       };
-      return formattedResults;
     },
   },
 };
