@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { DateTime } from 'luxon';
 
+import type { Movie } from './movie';
+
 export interface MovieClient {
   listMovies: (input: ListMoviesInput) => Promise<PaginatedResult<Movie>>;
 }
@@ -15,14 +17,6 @@ export interface PaginatedResult<Type> {
   page: number;
   results: Type[];
   totalPages: number;
-}
-
-export interface Movie {
-  id: string;
-  popularity: number;
-  releaseDate: DateTime;
-  score?: number;
-  title: string;
 }
 
 export class TMDBMovieClient implements MovieClient {

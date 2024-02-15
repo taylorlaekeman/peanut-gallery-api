@@ -5,7 +5,8 @@ import {
   InsufficientReviewsError,
   MovieNotFoundError,
 } from './metascoreClient.js';
-import type { Movie, MovieClient } from './movieClient';
+import type { Movie } from './movie';
+import type { MovieClient } from './movieClient';
 
 export class MovieLister {
   readonly metascoreClient: MetascoreClient;

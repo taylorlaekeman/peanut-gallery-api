@@ -3,7 +3,8 @@ import { expect, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
 import getServer from './api.js';
-import type { Movie, PaginatedResult } from './movieClient';
+import type { Movie } from './movie';
+import type { PaginatedResult } from './movieClient';
 import { buildMovie, TestMovieClient } from './movieClient.js';
 import { TestMetascoreClient } from './metascoreClient.js';
 

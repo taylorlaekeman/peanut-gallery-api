@@ -1,6 +1,7 @@
 import { beforeAll, expect, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
+import type { Movie } from './movie';
 import { TMDBMovieClient } from './movieClient.js';
 
 let apiKey = 'api key';
