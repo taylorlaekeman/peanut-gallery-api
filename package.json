@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "check": "npm run format:check && npm run lint && npm run compile && npm run test:all",
+    "check:watch": "nodemon --watch src --exec npm run check",
     "compile": "tsc",
     "compile:watch": "tsc --watch --synchronousWatchDirectory false",
     "dev": "nodemon --watch src -e ts --exec npm run start",
