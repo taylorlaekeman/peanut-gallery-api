@@ -13,35 +13,12 @@ beforeAll(() => {
 
 test('calls api correctly', async () => {
   const client = new TMDBMovieClient({ apiKey });
-  const result = await client.listMovies({
-    endDate: DateTime.fromISO('2020-01-31'),
-    startDate: DateTime.fromISO('2020-01-01'),
-  });
-  expect(result.results[0]).toMatchObject({
-    id: '660521',
-    releaseDate: DateTime.fromISO('2020-01-07'),
-    title: 'The Mercenary',
-  });
-  expect(result.results[1]).toMatchObject({
-    id: '522627',
-    releaseDate: DateTime.fromISO('2020-01-01'),
-    title: 'The Gentlemen',
-  });
-  expect(result.results[2]).toMatchObject({
-    id: '38700',
-    releaseDate: DateTime.fromISO('2020-01-15'),
-    title: 'Bad Boys for Life',
-  });
-  expect(result.results[3]).toMatchObject({
-    id: '659676',
-    releaseDate: DateTime.fromISO('2020-01-09'),
-    title: 'Masameer: The Movie',
-  });
-  expect(result.results[4]).toMatchObject({
-    id: '573730',
-    releaseDate: DateTime.fromISO('2020-01-17'),
-    title: 'Made in Abyss: Dawn of the Deep Soul',
-  });
+  const endDate = DateTime.fromISO('2020-01-31');
+  const startDate = DateTime.fromISO('2020-01-01');
+  const result = await client.listMovies({ endDate, startDate });
+  expect(result.results).toHaveLength(20);
+  expect(areBetweenDates(result.results, { endDate, startDate })).toBe(true);
+  expect(areOrderedByPopularity(result.results)).toBe(true);
 });
 
 test('handles error', async () => {
@@ -53,3 +30,23 @@ test('handles error', async () => {
     })
   ).rejects.toThrow();
 });
+
+function areBetweenDates(
+  movies: Movie[],
+  { startDate, endDate }: { endDate: DateTime; startDate: DateTime }
+): boolean {
+  for (const movie of movies) {
+    if (movie.releaseDate > endDate) return false;
+    if (movie.releaseDate < startDate) return false;
+  }
+  return true;
+}
+
+function areOrderedByPopularity(movies: Movie[]): boolean {
+  let lastPopularity = movies[0].popularity;
+  for (const movie of movies) {
+    if (movie.popularity > lastPopularity) return false;
+    lastPopularity = movie.popularity;
+  }
+  return true;
+}
