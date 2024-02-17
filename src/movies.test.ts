@@ -2,7 +2,7 @@
 import { expect, test } from '@jest/globals';
 import { DateTime } from 'luxon';
 
-import getServer from './api.js';
+import getServer, { getTestContext } from './api.js';
 import type { Movie } from './movie';
 import type { PaginatedResult } from './movieClient';
 import { buildMovie, TestMovieClient } from './movieClient.js';
@@ -37,11 +37,11 @@ test('returns movie with metascore', async () => {
       query: moviesQuery,
     },
     {
-      contextValue: {
+      contextValue: getTestContext({
         metascoreClient,
         movieClient,
         now: DateTime.fromISO('2020-02-01'),
-      },
+      }),
     }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');
@@ -76,11 +76,11 @@ test('uses start date one month ago when none is provided', async () => {
       },
     },
     {
-      contextValue: {
+      contextValue: getTestContext({
         metascoreClient,
         movieClient,
         now: DateTime.fromISO('2020-02-01'),
-      },
+      }),
     }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');
@@ -114,11 +114,11 @@ test('uses end date one month in the future when none is provided', async () => 
       },
     },
     {
-      contextValue: {
+      contextValue: getTestContext({
         metascoreClient,
         movieClient,
         now: DateTime.fromISO('2020-01-01'),
-      },
+      }),
     }
   );
   if (response.body.kind !== 'single') throw new Error('not single result');

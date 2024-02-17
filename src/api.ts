@@ -4,10 +4,13 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import { DateTime } from 'luxon';
 
 import type { MetascoreClient } from './metascoreClient';
-import { HttpMetascoreClient } from './metascoreClient.js';
+import { HttpMetascoreClient, TestMetascoreClient } from './metascoreClient.js';
 import type { MovieClient } from './movieClient';
-import { TMDBMovieClient } from './movieClient.js';
+import { TestMovieClient, TMDBMovieClient } from './movieClient.js';
+import type { MovieWriter } from './movieWriter';
+import { DynamoMovieWriter, TestMovieWriter } from './movieWriter.js';
 import { MovieLister } from './movieLister.js';
+import { MoviePopulator } from './moviePopulator.js';
 
 export async function startServer(): Promise<string> {
   const server = getServer();
@@ -15,6 +18,9 @@ export async function startServer(): Promise<string> {
     context: async () => ({
       metascoreClient: new HttpMetascoreClient(),
       movieClient: new TMDBMovieClient({ apiKey: process.env.API_KEY ?? '' }),
+      movieWriter: new DynamoMovieWriter({
+        tableName: process.env.MOVIE_TABLE_NAME ?? '',
+      }),
       now: DateTime.now(),
     }),
     listen: { port: 4000 },
@@ -32,12 +38,27 @@ export function getServer(): ApolloServer<Context> {
 interface Context {
   metascoreClient: MetascoreClient;
   movieClient: MovieClient;
+  movieWriter: MovieWriter;
   now: DateTime;
+}
+
+export function getTestContext({
+  metascoreClient = new TestMetascoreClient(),
+  movieClient = new TestMovieClient(),
+  movieWriter = new TestMovieWriter(),
+  now = DateTime.fromISO('2020-01-01'),
+}: {
+  metascoreClient?: MetascoreClient;
+  movieClient?: MovieClient;
+  movieWriter?: MovieWriter;
+  now?: DateTime;
+}): Context {
+  return { metascoreClient, movieClient, movieWriter, now };
 }
 
 const TYPE_DEFS = `#graphql
   type Movie {
-    id: String
+    id: ID
     releaseDate: String
     reviewCount: Int
     score: Float
