@@ -102,8 +102,9 @@ describe('dynamo movie writer', () => {
     expect(queryResponse.Items).toMatchObject([
       {
         movie: JSON.stringify({ ...movie, releaseDate: '2020-01-01' }),
-        'popularity-id': '10-test-id',
+        'popularity-id': '00010-test-id',
         'score-id': '10-test-id',
+        title: 'test title',
         'year-week': '2020-01',
       },
     ]);

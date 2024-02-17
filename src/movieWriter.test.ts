@@ -37,7 +37,7 @@ describe('dynamo movie writer', () => {
           score: 10,
           title: 'test title',
         }),
-        'popularity-id': '10-test-id',
+        'popularity-id': '00010-test-id',
         'score-id': '10-test-id',
         'year-week': '2020-01',
       },

@@ -29,6 +29,9 @@ export class DynamoMovieWriter implements MovieWriter {
       new DynamoDBClient({ credentials })
     );
     const yearWeek = movie.releaseDate.toFormat('yyyy-WW');
+    const formattedPopularity = Math.round(movie.popularity)
+      .toString()
+      .padStart(5, '0');
     await client.send(
       new PutCommand({
         Item: {
@@ -36,8 +39,9 @@ export class DynamoMovieWriter implements MovieWriter {
             ...movie,
             releaseDate: movie.releaseDate.toISODate(),
           }),
-          'popularity-id': `${movie.popularity}-${movie.id}`,
+          'popularity-id': `${formattedPopularity}-${movie.id}`,
           'score-id': `${movie.score}-${movie.id}`,
+          title: movie.title,
           'year-week': yearWeek,
         },
         TableName: this.tableName,
