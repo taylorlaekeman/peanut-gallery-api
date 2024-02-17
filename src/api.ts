@@ -71,12 +71,46 @@ const TYPE_DEFS = `#graphql
     totalPages: Int
   }
 
+  type PopulateMoviesResult {
+    status: Int
+  }
+
   type Query {
     movies(endDate: String, page: Int, startDate: String): PaginatedMoviesResult
+  }
+
+  type Mutation {
+    populateMovies(endDate: String, startDate: String): PopulateMoviesResult
   }
 `;
 
 const RESOLVERS = {
+  Mutation: {
+    populateMovies: async (
+      _parent: any,
+      { endDate, startDate }: { endDate?: string; startDate?: string },
+      { metascoreClient, movieClient, movieWriter, now }: Context
+    ) => {
+      const startDateOrDefault =
+        startDate === undefined
+          ? now.minus({ month: 1 })
+          : DateTime.fromISO(startDate);
+      const endDateOrDefault =
+        endDate === undefined
+          ? now.plus({ month: 1 })
+          : DateTime.fromISO(endDate);
+      const moviePopulator = new MoviePopulator({
+        metascoreClient,
+        movieClient,
+        movieWriter,
+      });
+      await moviePopulator.populate({
+        endDate: endDateOrDefault,
+        startDate: startDateOrDefault,
+      });
+      return { status: 200 };
+    },
+  },
   Query: {
     movies: async (
       _parent: any,
