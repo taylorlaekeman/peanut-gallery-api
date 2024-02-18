@@ -6,7 +6,7 @@ import { DynamoMovieWriter } from './movieWriter.js';
 import { waitUntil } from './waitUntil.js';
 
 describe('dynamo movie writer', () => {
-  const TABLE_NAME = 'MoviesIntegrationTest';
+  const TABLE_NAME = 'MovieWriterIntegrationTest';
 
   beforeEach(async () => {
     if (await hasTable(TABLE_NAME)) {
