@@ -5,7 +5,11 @@ import {
   DescribeTableCommand,
   DynamoDBClient,
 } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb';
 
 function getClient(): DynamoDBClient {
   const credentials = fromSSO({ profile: 'PowerUserAccess' });
@@ -58,6 +62,22 @@ export async function hasTable(name: string): Promise<boolean> {
     return false;
   }
   return true;
+}
+
+export async function putItem({
+  item,
+  tableName,
+}: {
+  item: Record<string, any>;
+  tableName: string;
+}): Promise<void> {
+  const dynamoClient = DynamoDBDocumentClient.from(getClient());
+  await dynamoClient.send(
+    new PutCommand({
+      Item: item,
+      TableName: tableName,
+    })
+  );
 }
 
 export async function query({
