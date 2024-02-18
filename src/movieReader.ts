@@ -13,6 +13,11 @@ export interface MovieReader {
   }) => Promise<Movie[]>;
 }
 
+export enum OrderBy {
+  Popularity = 'popularity',
+  Score = 'score',
+}
+
 export class DynamoMovieReader implements MovieReader {
   private readonly tableName: string;
 
@@ -62,16 +67,10 @@ export class DynamoMovieReader implements MovieReader {
       })
     );
     const movies =
-      response.Items?.map(
-        (item) => JSON.parse(item.movie as string) as Movie
-      ) ?? [];
+      response.Items?.map((item) => deserializeMovie(item.movie as string)) ??
+      [];
     return movies;
   }
-}
-
-export enum OrderBy {
-  Popularity = 'popularity',
-  Score = 'score',
 }
 
 export function getWeeks({
@@ -94,4 +93,42 @@ export function getWeeks({
     result.push(week);
   }
   return result;
+}
+
+function deserializeMovie(serializedMovie: string): Movie {
+  const deserializedJson = JSON.parse(serializedMovie);
+  const movie: Movie = {
+    ...deserializedJson,
+    releaseDate: DateTime.fromISO(deserializedJson.releaseDate as string),
+  };
+  return movie;
+}
+
+export class TestMovieReader implements MovieReader {
+  private readonly movies: Record<string, Movie>;
+
+  constructor({ movies }: { movies: Record<string, Movie> }) {
+    this.movies = movies;
+  }
+
+  async read({
+    endDate,
+    orderBy = OrderBy.Score,
+    startDate,
+  }: {
+    endDate: DateTime;
+    orderBy?: OrderBy;
+    startDate: DateTime;
+  }): Promise<Movie[]> {
+    const sortedMovies = Object.values(this.movies).sort((a, b) =>
+      (a.score ?? 0) > (b.score ?? 0) ? -1 : 1
+    );
+    const moviesReleasedAfterStartDate = sortedMovies.filter(
+      (movie) => movie.releaseDate >= startDate
+    );
+    const moviesReleasedBeforeEndDate = moviesReleasedAfterStartDate.filter(
+      (movie) => movie.releaseDate <= endDate
+    );
+    return moviesReleasedBeforeEndDate;
+  }
 }
