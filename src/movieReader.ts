@@ -107,7 +107,7 @@ function deserializeMovie(serializedMovie: string): Movie {
 export class TestMovieReader implements MovieReader {
   private readonly movies: Record<string, Movie>;
 
-  constructor({ movies }: { movies: Record<string, Movie> }) {
+  constructor({ movies = {} }: { movies?: Record<string, Movie> } = {}) {
     this.movies = movies;
   }
 

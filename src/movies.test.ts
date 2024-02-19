@@ -5,8 +5,8 @@ import { DateTime } from 'luxon';
 import getServer, { getTestContext } from './api.js';
 import type { Movie } from './movie';
 import type { PaginatedResult } from './movieClient';
-import { buildMovie, TestMovieClient } from './movieClient.js';
-import { TestMetascoreClient } from './metascoreClient.js';
+import { buildMovie } from './movieClient.js';
+import { TestMovieReader } from './movieReader.js';
 
 const moviesQuery = `#graphql
   query GetMovies($endDate: String, $page: Int, $startDate: String) {
@@ -25,11 +25,15 @@ const moviesQuery = `#graphql
 `;
 
 test('returns movie with metascore', async () => {
-  const movieClient = new TestMovieClient({
-    movies: [buildMovie({ id: '1', releaseDate: '2020-01-01', title: 'Soul' })],
-  });
-  const metascoreClient = new TestMetascoreClient({
-    responses: { Soul: { score: 83 } },
+  const movieReader = new TestMovieReader({
+    movies: {
+      '1': buildMovie({
+        id: '1',
+        releaseDate: '2020-01-01',
+        score: 0.83,
+        title: 'Soul',
+      }),
+    },
   });
   const api = getServer();
   const response = await api.executeOperation(
@@ -38,8 +42,7 @@ test('returns movie with metascore', async () => {
     },
     {
       contextValue: getTestContext({
-        metascoreClient,
-        movieClient,
+        movieReader,
         now: DateTime.fromISO('2020-02-01'),
       }),
     }
@@ -53,18 +56,15 @@ test('returns movie with metascore', async () => {
   expect(paginatedMovies.totalPages).toBe(1);
   expect(paginatedMovies.results).toHaveLength(1);
   expect(paginatedMovies.results[0].title).toBe('Soul');
-  expect(paginatedMovies.results[0].score).toBe(8.3);
+  expect(paginatedMovies.results[0].score).toBe(0.83);
 });
 
 test('uses start date one month ago when none is provided', async () => {
-  const movieClient = new TestMovieClient({
-    movies: [
-      buildMovie({ id: '1', releaseDate: '2019-12-31', title: 'Soul' }),
-      buildMovie({ id: '2', releaseDate: '2020-01-01', title: 'Soul' }),
-    ],
-  });
-  const metascoreClient = new TestMetascoreClient({
-    responses: { Soul: { score: 83 } },
+  const movieReader = new TestMovieReader({
+    movies: {
+      '1': buildMovie({ id: '1', releaseDate: '2019-12-31', title: 'Soul' }),
+      '2': buildMovie({ id: '2', releaseDate: '2020-01-01', title: 'Soul' }),
+    },
   });
   const api = getServer();
   const response = await api.executeOperation(
@@ -77,8 +77,7 @@ test('uses start date one month ago when none is provided', async () => {
     },
     {
       contextValue: getTestContext({
-        metascoreClient,
-        movieClient,
+        movieReader,
         now: DateTime.fromISO('2020-02-01'),
       }),
     }
@@ -95,14 +94,11 @@ test('uses start date one month ago when none is provided', async () => {
 });
 
 test('uses end date one month in the future when none is provided', async () => {
-  const movieClient = new TestMovieClient({
-    movies: [
-      buildMovie({ id: '1', releaseDate: '2020-01-01', title: 'Soul' }),
-      buildMovie({ id: '2', releaseDate: '2020-02-01', title: 'Soul' }),
-    ],
-  });
-  const metascoreClient = new TestMetascoreClient({
-    responses: { Soul: { score: 83 } },
+  const movieReader = new TestMovieReader({
+    movies: {
+      '1': buildMovie({ id: '1', releaseDate: '2020-01-01', title: 'Soul' }),
+      '2': buildMovie({ id: '2', releaseDate: '2020-02-01', title: 'Soul' }),
+    },
   });
   const api = getServer();
   const response = await api.executeOperation(
@@ -115,8 +111,7 @@ test('uses end date one month in the future when none is provided', async () => 
     },
     {
       contextValue: getTestContext({
-        metascoreClient,
-        movieClient,
+        movieReader,
         now: DateTime.fromISO('2020-01-01'),
       }),
     }

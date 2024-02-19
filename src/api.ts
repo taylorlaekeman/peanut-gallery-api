@@ -7,9 +7,10 @@ import type { MetascoreClient } from './metascoreClient';
 import { HttpMetascoreClient, TestMetascoreClient } from './metascoreClient.js';
 import type { MovieClient } from './movieClient';
 import { TestMovieClient, TMDBMovieClient } from './movieClient.js';
+import type { MovieReader } from './movieReader';
+import { DynamoMovieReader, TestMovieReader } from './movieReader.js';
 import type { MovieWriter } from './movieWriter';
 import { DynamoMovieWriter, TestMovieWriter } from './movieWriter.js';
-import { MovieLister } from './movieLister.js';
 import { MoviePopulator } from './moviePopulator.js';
 
 export async function startServer(): Promise<string> {
@@ -19,6 +20,9 @@ export async function startServer(): Promise<string> {
       metascoreClient: new HttpMetascoreClient(),
       movieClient: new TMDBMovieClient({ apiKey: process.env.API_KEY ?? '' }),
       movieWriter: new DynamoMovieWriter({
+        tableName: process.env.MOVIE_TABLE_NAME ?? '',
+      }),
+      movieReader: new DynamoMovieReader({
         tableName: process.env.MOVIE_TABLE_NAME ?? '',
       }),
       now: DateTime.now(),
@@ -38,6 +42,7 @@ export function getServer(): ApolloServer<Context> {
 interface Context {
   metascoreClient: MetascoreClient;
   movieClient: MovieClient;
+  movieReader: MovieReader;
   movieWriter: MovieWriter;
   now: DateTime;
 }
@@ -45,15 +50,17 @@ interface Context {
 export function getTestContext({
   metascoreClient = new TestMetascoreClient(),
   movieClient = new TestMovieClient(),
+  movieReader = new TestMovieReader(),
   movieWriter = new TestMovieWriter(),
   now = DateTime.fromISO('2020-01-01'),
 }: {
   metascoreClient?: MetascoreClient;
   movieClient?: MovieClient;
+  movieReader?: MovieReader;
   movieWriter?: MovieWriter;
   now?: DateTime;
 }): Context {
-  return { metascoreClient, movieClient, movieWriter, now };
+  return { metascoreClient, movieClient, movieReader, movieWriter, now };
 }
 
 const TYPE_DEFS = `#graphql
@@ -119,7 +126,7 @@ const RESOLVERS = {
         page = 1,
         startDate,
       }: { endDate?: string; page?: number; startDate?: string },
-      { metascoreClient, movieClient, now }: Context
+      { movieReader, now }: Context
     ) => {
       const startDateOrDefault =
         startDate === undefined
@@ -129,8 +136,7 @@ const RESOLVERS = {
         endDate === undefined
           ? now.plus({ month: 1 })
           : DateTime.fromISO(endDate);
-      const lister = new MovieLister({ metascoreClient, movieClient });
-      const movies = await lister.list({
+      const movies = await movieReader.read({
         endDate: endDateOrDefault,
         startDate: startDateOrDefault,
       });
