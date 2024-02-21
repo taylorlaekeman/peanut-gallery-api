@@ -1,3 +1,8 @@
+import type {
+  ApolloServerPlugin,
+  GraphQLRequestContext,
+  GraphQLRequestListener,
+} from '@apollo/server';
 import { ApolloServer } from '@apollo/server';
 /* eslint-disable-next-line import/extensions */
 import { startStandaloneServer } from '@apollo/server/standalone';
@@ -35,6 +40,7 @@ export async function startServer(): Promise<string> {
 export function getServer(): ApolloServer<Context> {
   return new ApolloServer<Context>({
     typeDefs: TYPE_DEFS,
+    plugins: [new LoggingPlugin()],
     resolvers: RESOLVERS,
   });
 }
@@ -152,5 +158,26 @@ const RESOLVERS = {
     },
   },
 };
+
+class LoggingPlugin implements ApolloServerPlugin {
+  async requestDidStart(
+    requestContext: GraphQLRequestContext<Context>
+  ): Promise<GraphQLRequestListener<Context>> {
+    console.log(requestContext.request.query);
+    const variables = requestContext.request.variables ?? {};
+    if (Object.keys(variables).length > 0) console.log(variables);
+    return {
+      async willSendResponse(
+        requestContext: GraphQLRequestContext<Context>
+      ): Promise<void> {
+        if (requestContext.errors !== undefined)
+          requestContext.errors.forEach((error) => {
+            console.error(error);
+          });
+        else console.log('done');
+      },
+    };
+  }
+}
 
 export default getServer;
