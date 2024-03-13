@@ -61,6 +61,7 @@ export class DynamoMovieReader implements MovieReader {
       new QueryCommand({
         ExpressionAttributeNames: { '#yearWeek': 'year-week' },
         ExpressionAttributeValues: { ':yearWeek': week },
+        IndexName: 'moviesByScore',
         KeyConditionExpression: '#yearWeek = :yearWeek',
         ScanIndexForward: false,
         TableName: this.tableName,
