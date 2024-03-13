@@ -35,6 +35,7 @@ export class DynamoMovieWriter implements MovieWriter {
     await client.send(
       new PutCommand({
         Item: {
+          id: movie.id,
           movie: JSON.stringify({
             ...movie,
             releaseDate: movie.releaseDate.toISODate(),

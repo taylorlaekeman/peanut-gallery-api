@@ -30,6 +30,7 @@ describe('dynamo movie writer', () => {
     const putInput = mockedClient.commandCalls(PutCommand)[0].args[0].input;
     expect(putInput).toMatchObject({
       Item: {
+        id: 'test-id',
         movie: JSON.stringify({
           id: 'test-id',
           popularity: 10,
