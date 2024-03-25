@@ -1,0 +1,28 @@
+name: Deploy
+run-name: Peanut Gallery API Deploy
+on:
+  push:
+    branches: main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v4
+      - name: install
+        run: npm install
+      - name: zip
+        run: npm run zip
+      - name: authenticate with aws
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: us-east-2
+          role-to-assume: arn:aws:iam::256470578440:role/PeanutGalleryGithubActionsAPIDeployer
+      - name: publish to s3
+        run: aws s3 cp code.zip s3://peanutgallerygraphqllambdabucket
+      - name: update lambda function
+        run: aws lambda update-function-code --function-name PeanutGalleryGraphQLLambda --s3-bucket peanutgallerygraphqllambdabucket --s3-key code.zip
