@@ -12,7 +12,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
       - name: install
-        run: npm run install
+        run: npm install
       - name: zip
         run: npm run zip
       - run: ls
