@@ -20,7 +20,7 @@
     "test:integration:watch": "npm run test:integration -- --watchAll",
     "test:unit": "jest --testPathIgnorePatterns \"integration.test.ts|node_modules|dist\"",
     "test:unit:watch": "npm run test:unit -- --watchAll",
-    "zip": "npm run compile && zip -r code.zip dist/*"
+    "zip": "npm run compile && cp -r node_modules dist && cd dist && zip -r ../code.zip ."
   },
   "repository": {
     "type": "git",
