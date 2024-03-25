@@ -21,3 +21,5 @@ jobs:
         with:
           aws-region: us-east-2
           role-to-assume: arn:aws:iam::256470578440:role/PeanutGalleryGithubActionsAPIDeployer
+      - name: publish
+        run: aws s3 cp code.zip s3://peanutgallerygraphqllambdabucket
