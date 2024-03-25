@@ -21,5 +21,7 @@ jobs:
         with:
           aws-region: us-east-2
           role-to-assume: arn:aws:iam::256470578440:role/PeanutGalleryGithubActionsAPIDeployer
-      - name: publish
+      - name: publish to s3
         run: aws s3 cp code.zip s3://peanutgallerygraphqllambdabucket
+      - name: update lambda function
+        run: aws lambda update-function-code --function-name PeanutGalleryGraphQLLambda --s3-bucket peanutgallerygraphqllambdabucket --s3-key code.zip
